@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Birthday!</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: radial-gradient(circle at center, #2c1635 0%, #110717 100%);
+            color: #fff;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        .screen {
+            display: none;
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            justify-content: center;
+            align-items: center;
+            animation: fadeIn 0.8s ease-in-out;
+        }
+
+        .screen.active {
+            display: flex;
+        }
+
+        .card-box {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+            width: 90%;
+            max-width: 420px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+        }
+
+        .gift-icon {
+            font-size: 40px;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            color: #ffb6c1;
+            margin: 10px 0;
+        }
+
+        h2 {
+            font-size: 1.1rem;
+            font-weight: 400;
+            letter-spacing: 1px;
+            color: #ddd;
+        }
+
+        p {
+            font-size: 0.95rem;
+            color: #aaa;
+            margin: 15px 0 25px 0;
+        }
+
+        button {
+            background: linear-gradient(135deg, #ff758c 0%, #ff7eb3 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 4px 15px rgba(255, 117, 140, 0.4);
+        }
+
+        button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 20px rgba(255, 117, 140, 0.6);
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* Cake & Candle Styles */
+        .cake {
+            position: relative;
+            margin: 40px auto 20px auto;
+            width: 120px;
+            height: 80px;
+        }
+
+        .layer {
+            position: absolute;
+            width: 100%;
+            height: 40px;
+            background: #ffb6c1;
+            border-radius: 10px;
+        }
+
+        .bottom-layer {
+            bottom: 0;
+            background: #e07a93;
+        }
+
+        .top-layer {
+            top: 0;
+            width: 80%;
+            left: 10%;
+        }
+
+        .candle {
+            position: absolute;
+            top: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 8px;
+            height: 35px;
+            background: #fff;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .flame {
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 12px;
+            height: 18px;
+            background: #ffaa00;
+            border-radius: 50% 50% 20% 20%;
+            box-shadow: 0 0 10px #ffaa00, 0 0 20px #ff5500;
+            animation: flicker 0.6s infinite alternate;
+        }
+
+        /* Polaroid Gallery Styles */
+        .polaroid-container {
+            position: relative;
+            width: 100%;
+            height: 270px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 15px 0;
+        }
+
+        .polaroid {
+            position: absolute;
+            background: #fff;
+            padding: 10px 10px 30px 10px;
+            border-radius: 4px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+            transform: scale(0.8) rotate(0deg);
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.5s ease-in-out;
+        }
+
+        .polaroid.active {
+            transform: scale(1) rotate(-3deg);
+            opacity: 1;
+            pointer-events: auto;
+            z-index: 2;
+        }
+
+        .polaroid img {
+            width: 180px;
+            height: 180px;
+            object-fit: cover;
+            border-radius: 2px;
+        }
+
+        .polaroid .caption {
+            color: #333;
+            font-size: 0.85rem;
+            margin-top: 8px;
+            margin-bottom: 0;
+            font-weight: 600;
+        }
+
+        /* Envelope Letter Styles */
+        .envelope {
+            background: #fff;
+            color: #333;
+            padding: 30px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: transform 0.3s;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        .envelope:hover {
+            transform: translateY(-5px);
+        }
+
+        .letter-content {
+            text-align: left;
+            background: #fff;
+            color: #333;
+            padding: 25px;
+            border-radius: 10px;
+            animation: popUp 0.5s ease-in-out;
+        }
+
+        .letter-content p {
+            color: #555;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        .signature {
+            margin-top: 15px;
+            font-style: italic;
+            font-weight: bold;
+            color: #333 !important;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes flicker {
+            0% { transform: translateX(-50%) scale(1); opacity: 0.9; }
+            100% { transform: translateX(-50%) scale(1.1); opacity: 1; }
+        }
+
+        @keyframes popUp {
+            from { transform: scale(0.8); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Screen 1: Welcome / Unlock Modal -->
+    <div id="screen-1" class="screen active">
+        <div class="card-box">
+            <span class="gift-icon">🎁</span>
+            <h2>A SURPRISE FOR</h2>
+            <h1>Reshuuu</h1>
+            <p>Made with love, just for you...</p>
+            <button id="unlock-btn">Unlock It</button>
+        </div>
+    </div>
+
+    <!-- Screen 2: Interactive Cake & Candles -->
+    <div id="screen-2" class="screen">
+        <div class="card-box">
+            <h2>Make a Wish 🎂</h2>
+            <div class="cake">
+                <div class="candle" id="candle">
+                    <div class="flame" id="flame"></div>
+                </div>
+                <div class="layer top-layer"></div>
+                <div class="layer bottom-layer"></div>
+            </div>
+            <p id="cake-instruction">Tap the flame to blow it out!</p>
+            <button id="next-to-photos" class="hidden">Continue</button>
+        </div>
+    </div>
+
+    <!-- Screen 3: Photo Memory Lane -->
+    <div id="screen-3" class="screen">
+        <div class="card-box">
+            <h2>A Walk Down Memory Lane 📸</h2>
+            <p>Swipe through our favorite moments</p>
+            
+            <div class="polaroid-container">
+                <!-- Photo 1 -->
+                <div class="polaroid active" data-index="0">
+                    <img src="photo1.jpeg" alt="Memory 1">
+                    <p class="caption">Our first date ✨</p>
+                </div>
+                <!-- Photo 2 -->
+                <div class="polaroid" data-index="1">
+                    <img src="photo2.jpeg" alt="Memory 2">
+                    <p class="caption">That crazy road trip 🚗</p>
+                </div>
+                <!-- Photo 3 -->
+                <div class="polaroid" data-index="2">
+                    <img src="photo3.jpg" alt="Memory 3">
+                    <p class="caption">Still my favorite person ❤️</p>
+                </div>
+            </div>
+
+            <button id="next-to-letter">Keep Going</button>
+        </div>
+    </div>
+
+    <!-- Screen 4: Interactive Letter -->
+    <div id="screen-4" class="screen">
+        <div class="card-box">
+            <div class="envelope" id="envelope">
+                <div class="envelope-flap"></div>
+                <div class="letter-preview">Tap to open your letter 💌</div>
+            </div>
+            <div class="letter-content hidden" id="letter-content">
+                <h3>Dear Reshuuuu,</h3>
+                <p>Happy Birthday! 💖</p>
+                <p>I still don't know how someone like you came into my life, but I'm really thankful for it. I hope this year gives you peace, good health, and many little reasons to smile everyday. You deserve all the happiness in the world! ✨</p>
+                <p class="signature">With all my love,<br>Aniket</p>
+                <button id="restart-btn" style="margin-top: 15px;">Replay the Preview</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Screen Elements
+        const screen1 = document.getElementById('screen-1');
+        const screen2 = document.getElementById('screen-2');
+        const screen3 = document.getElementById('screen-3');
+        const screen4 = document.getElementById('screen-4');
+
+        // Buttons & Elements
+        const unlockBtn = document.getElementById('unlock-btn');
+        const flame = document.getElementById('flame');
+        const cakeInstruction = document.getElementById('cake-instruction');
+        const nextToPhotosBtn = document.getElementById('next-to-photos');
+        const nextToLetterBtn = document.getElementById('next-to-letter');
+
+        const polaroids = document.querySelectorAll('.polaroid');
+        let currentPhotoIndex = 0;
+
+        const envelope = document.getElementById('envelope');
+        const letterContent = document.getElementById('letter-content');
+        const restartBtn = document.getElementById('restart-btn');
+
+        // Step 1 -> Step 2 (Cake)
+        unlockBtn.addEventListener('click', () => {
+            screen1.classList.remove('active');
+            screen2.classList.add('active');
+        });
+
+        // Step 2: Blow out candle
+        flame.addEventListener('click', () => {
+            flame.style.display = 'none';
+            cakeInstruction.textContent = 'Wish granted! ✨';
+            nextToPhotosBtn.classList.remove('hidden');
+        });
+
+        nextToPhotosBtn.addEventListener('click', () => {
+            screen2.classList.remove('active');
+            screen3.classList.add('active');
+        });
+
+        // Step 3: Cycle through photos
+        nextToLetterBtn.addEventListener('click', () => {
+            currentPhotoIndex++;
+            if (currentPhotoIndex < polaroids.length) {
+                polaroids.forEach(p => p.classList.remove('active'));
+                polaroids[currentPhotoIndex].classList.add('active');
+                
+                if (currentPhotoIndex === polaroids.length - 1) {
+                    nextToLetterBtn.textContent = "Open Letter 💌";
+                }
+            } else {
+                screen3.classList.remove('active');
+                screen4.classList.add('active');
+            }
+        });
+
+        // Step 4: Open Letter
+        envelope.addEventListener('click', () => {
+            envelope.classList.add('hidden');
+            letterContent.classList.remove('hidden');
+        });
+
+        // Restart experience
+        restartBtn.addEventListener('click', () => {
+            screen4.classList.remove('active');
+            screen1.classList.add('active');
+            
+            // Reset states
+            flame.style.display = 'block';
+            cakeInstruction.textContent = 'Tap the flame to blow it out!';
+            nextToPhotosBtn.classList.add('hidden');
+            
+            currentPhotoIndex = 0;
+            polaroids.forEach((p, idx) => {
+                p.classList.remove('active');
+                if(idx === 0) p.classList.add('active');
+            });
+            nextToLetterBtn.textContent = "Keep Going";
+            
+            envelope.classList.remove('hidden');
+            letterContent.classList.add('hidden');
+        });
+    </script>
+</body>
+</html>
